@@ -17,21 +17,26 @@ def ring(
     angle_resolution: float = 2.5,
     layer: LayerSpec = "WG",
     angle: float = 360,
+    distance_resolution: float | None=None,
 ) -> Component:
     """Returns a ring.
 
     Args:
         radius: ring radius.
         width: of the ring.
-        angle_resolution: number of points per degree.
+        angle_resolution: max number of degrees per point.
         layer: layer.
         angle: angular coverage of the ring
+        distance_resolution: max distance between points. This is an alternate way to describe the resolution besides setting angle_resolution. If distance_resolution and angle_resolution are both set, distance_resolution determines the resolution.
     """
     D = gf.Component()
     inner_radius = radius - width / 2
     outer_radius = radius + width / 2
-    n = int(np.round(360 / angle_resolution))
-    t = np.linspace(0, angle, n + 1) * pi / 180
+    if distance_resolution != None:
+        num_points = int(np.ceil(2 * pi * outer_radius / distance_resolution))
+    else:
+        num_points = int(np.ceil(360 / angle_resolution))
+    t = np.linspace(0, angle, num_points + 1) * pi / 180
     inner_points_x = inner_radius * cos(t)
     inner_points_y = inner_radius * sin(t)
     outer_points_x = outer_radius * cos(t)
