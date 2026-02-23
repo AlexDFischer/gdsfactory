@@ -38,19 +38,19 @@ def ring(
     if angle > 360 or angle < 0:
         raise ValueError(f"Error: angle is {angle}, but it must be in [0, 360].")
     
-    if distance_resolution != None:
-        if distance_resolution <= 0:
-            raise ValueError(f"Error: distance_resolution is {distance_resolution}, but it must be positive if given.")
-    elif angle_resolution <= 0:
+    if distance_resolution is not None and distance_resolution <= 0:
+        raise ValueError(f"Error: distance_resolution is {distance_resolution}, but it must be positive if given.")
+    
+    if distance_resolution is None and angle_resolution <= 0:
         raise ValueError(f"Error: angle_resolution is {angle_resolution}, but it must be positive.")
 
     D = gf.Component()
     inner_radius = radius - width / 2
     outer_radius = radius + width / 2
-    if distance_resolution != None:
+    if distance_resolution is not None:
         num_points = int(np.ceil(2 * pi * outer_radius * angle / 360 / distance_resolution))
     else:
-        num_points = int(np.ceil(360 / angle_resolution))
+        num_points = int(np.ceil(angle / angle_resolution))
     t = np.linspace(0, angle, num_points + 1) * pi / 180
     inner_points_x = inner_radius * cos(t)
     inner_points_y = inner_radius * sin(t)
